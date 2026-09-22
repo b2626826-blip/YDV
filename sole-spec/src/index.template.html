@@ -1,0 +1,92 @@
+<title>鞋底材料規格對照表</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>/*{{styles}}*/</style>
+
+<header class="mast">
+  <div class="mast-inner">
+    <p class="eyebrow">Sole &amp; Midsole Material Reference</p>
+    <h1>鞋底材料規格對照表</h1>
+    <p class="sub">發泡體與實心彈性體的硬度、耐磨、密度與加工窗口一覽。數值為鞋業常見量產區間,非單一料號規格 — 下單前請以供應商 TDS 與實測為準。</p>
+    <div class="meta">
+      <span>Rev 2026-09</span><span>硬度 ASTM D2240 / Asker C</span><span>耐磨 ISO 4649（舊 DIN 53516）</span><span>單位 mm³ · g/cm³ · °C</span>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <label class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="搜尋材料、工法或關鍵字（如 TPU、水解、模溫）" aria-label="搜尋材料或工法">
+    </label>
+    <span class="hits" id="hits"></span>
+    <nav class="jump">
+      <a href="#mat">材料</a><a href="#hard">硬度</a><a href="#abr">耐磨</a><a href="#proc">加工</a><a href="#pick">選材</a><a href="#test">測試</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="mat">
+    <div class="sec-head"><span class="sec-num">01</span><h2>材料規格總表</h2></div>
+    <p class="sec-note">發泡體硬度以 <b>Asker C</b> 表示,實心件以 <b>Shore A / D</b> 表示 — 兩者不可直接換算,報價單務必註明量測法。成本指數以 EVA 樹脂 = 1 的相對料價,不含加工。</p>
+    <div id="slot-materials"></div>
+    <div class="warnbox">
+      <p><b>常見混淆</b></p>
+      <p>① <b>TPE 是總稱</b>:TPU、TPEE、TPV 皆屬 TPE。報價單只寫「TPE」時,九成指 SEBS/SBS 基的 TPE-S,務必問清基材。</p>
+      <p>② <b>aTPU 兩種說法</b>:鞋業指 aliphatic（脂肪族,不黃變）;少數料商用來指 amorphous（非結晶）。下單前確認 ISO 種類。</p>
+      <p>③ <b>PM / IM / CM 是工法不是材料</b>:同一支 EVA 或 PEBA 可走任一工法,物性差異可達 30%。</p>
+    </div>
+  </section>
+
+  <section id="hard">
+    <div class="sec-head"><span class="sec-num">02</span><h2>硬度尺標</h2></div>
+    <p class="sec-note">兩把不同的尺:發泡體用 Asker C（低荷重、球形壓針),實心件用 Shore A/D。實心圖以 Shore A 為主軸,下排標出對應的 Shore D 位置（A95 ≈ D45）。</p>
+    <div id="slot-foam-hardness"></div>
+    <div id="slot-solid-hardness"></div>
+  </section>
+
+  <section id="abr">
+    <div class="sec-head"><span class="sec-num">03</span><h2>DIN 耐磨對照</h2></div>
+    <p class="sec-note">ISO 4649 Method A(10 N 荷重、40 m 行程),結果為磨耗體積 mm³ — <b>數字越低越耐磨</b>。橫軸為對數刻度。品牌規範常見門檻:大底 ≤ 150 mm³,外銷耐磨要求 ≤ 80 mm³。</p>
+    <div id="slot-abrasion"></div>
+    <div class="warnbox">
+      <p><b>耐磨 ≠ 抓地</b>:黏性生膠（200–350 mm³）濕地摩擦係數可達 1.0 以上,但磨耗是碳素橡膠的 4 倍;TPU 乾地最耐磨,濕地 COF 常低於 0.5。實務做法是<b>分區配方</b> — 前掌黏膠、後跟外側碳素膠。</p>
+    </div>
+  </section>
+
+  <section id="proc">
+    <div class="sec-head"><span class="sec-num">04</span><h2>工法加工參數</h2></div>
+    <p class="sec-note">溫度為機台設定值區間,實際需依料號 MFI、壁厚與模具流道微調。收縮／放大率為<b>模具設計補償值</b>,首模務必量測後修模。</p>
+    <div id="slot-processes"></div>
+    <div class="warnbox">
+      <p><b>PM / IM / CM 工序差異（同為 EVA）</b></p>
+      <p><code>PM</code> 發泡片材 → 加熱 → 壓形　｜　<code>IM</code> 粒料 → 射出 → 開模瞬間發泡　｜　<code>CM</code> 粒料 → 一次發泡成胚 → 裁切 → 模內二次定型</p>
+      <p>成本與物性同向遞增:PM 最便宜但密度不均,IM 一模成型但皮膜厚偏重,CM 最輕最彈但多站高工時。</p>
+    </div>
+  </section>
+
+  <section id="pick">
+    <div class="sec-head"><span class="sec-num">05</span><h2>部位選材對照</h2></div>
+    <p class="sec-note">以功能需求反推材料與工法,每張卡片末行為該部位實務上最常見的失敗模式。</p>
+    <div id="slot-picks"></div>
+    <div class="warnbox">
+      <p><b>水解陷阱</b>:聚酯型 TPU 與 PU 發泡在 70 °C / 95% RH 條件下 3–5 週開始劣化。銷往東南亞、中南美或長期海運倉儲的款式,務必指定<b>聚醚型</b>或添加抗水解劑,並要求 SATRA TM344 報告。</p>
+    </div>
+  </section>
+
+  <section id="test">
+    <div class="sec-head"><span class="sec-num">06</span><h2>測試方法與常見規範</h2></div>
+    <p class="sec-note">驗貨規格書上的數字若沒有附測試方法,基本上無法比較 — 同一支料用不同方法可差一倍。</p>
+    <div id="slot-tests"></div>
+  </section>
+
+  <footer>
+    <p>數值為鞋材市場常見量產區間整理,供打樣與詢價前的方向判斷之用。<b>不可作為驗收依據</b> — 同一材料類別內不同料號差異可達 30% 以上,請向供應商索取 TDS 與第三方測試報告,並以自家實測為準。</p>
+    <p><code>硬度 Asker C ≠ Shore A</code> · <code>DIN 53516 已由 ISO 4649 取代</code> · <code>成本指數為樹脂相對料價,不含加工與模具攤提</code></p>
+  </footer>
+</div>
+
+<script>/*{{script}}*/</script>
