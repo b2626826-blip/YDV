@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "tsc -b --pretty false",
     "build": "tsc -b && vite build",
-    "check": "tsc -b --pretty false"
+    "check": "tsc -b --pretty false",
+    "test": "node --test src/utils/orderNumbers.test.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",

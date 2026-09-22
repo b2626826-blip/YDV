@@ -11,3 +11,106 @@
 body { margin: 0; min-width: 320px; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
+
+@media (max-width: 1279px) {
+  #production-orders > div.overflow-hidden > div:first-child {
+    display: none;
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button {
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button > span:first-child {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button > span:not(:first-child):not(:nth-child(2)) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button > span:first-child::before { content: '訂單總編號'; }
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(3)::before { content: '顏色'; }
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(4)::before { content: '生產進度'; }
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(5)::before { content: '目前狀態'; }
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(6)::before { content: '下一批交貨'; }
+  #production-orders > div.overflow-hidden > div:last-child > button > span:nth-child(7)::before { content: '目的地'; }
+
+  #production-orders > div.overflow-hidden > div:last-child > button > span:first-child::before,
+  #production-orders > div.overflow-hidden > div:last-child > button > span:not(:first-child):not(:nth-child(2))::before {
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 639px) {
+  main > header > div:has(> div + button) {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  main > header > div:has(> div + button) > button,
+  main > div.max-w-6xl > section > div.mt-8 > button,
+  main > div.max-w-6xl > section > div.mb-5 > button {
+    width: 100%;
+  }
+
+  main > header > div:has(> button + span),
+  main > header > div:has(> div + span) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  main > div.max-w-6xl {
+    padding: 1.25rem 1rem;
+  }
+
+  main > div.max-w-6xl > div.rounded-2xl,
+  main > div.max-w-6xl > section.rounded-2xl {
+    padding: 1rem;
+  }
+
+  .h-\[380px\] {
+    height: 16rem;
+    min-width: 0;
+  }
+
+  .min-h-\[280px\] {
+    min-height: 16rem;
+  }
+
+  #production-orders > div.overflow-hidden > div:last-child > button {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  main > div.max-w-6xl > section > div.mt-8,
+  main > div.max-w-6xl > section > div.mb-5.flex.items-end,
+  main > div.max-w-6xl > div.rounded-2xl > section > div.mt-5.flex.flex-wrap,
+  main > div.max-w-6xl > section.rounded-2xl > div.mb-5.flex.items-center.justify-between {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  main > div.max-w-6xl > div.rounded-2xl > * {
+    min-width: 0;
+  }
+
+  main > div.max-w-6xl > section > div.mt-8 > button {
+    text-align: center;
+  }
+}

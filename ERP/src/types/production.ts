@@ -24,6 +24,7 @@ export interface DeliveryBatchItem extends ProductionItem {
 export interface DeliveryBatch {
   id: string;
   batchNumber: number;
+  productionLine: string;
   items: DeliveryBatchItem[];
   dueDate: string;
   destinationCountry: string;
@@ -33,6 +34,7 @@ export interface DeliveryBatch {
 export interface ProductionOrder {
   id: string;
   orderNumber: string;
+  productSequence?: number;
   product: Product;
   items: ProductionItem[];
   totalQuantity: number;
