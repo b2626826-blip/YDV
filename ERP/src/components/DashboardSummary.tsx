@@ -9,9 +9,10 @@ const cards: Array<{ label: string; filter: SummaryFilter; tone: string }> = [
   { label: '採購中', filter: 'purchasing', tone: 'border-amber-100 bg-amber-50 text-amber-800' },
   { label: '待生管排程', filter: 'pending', tone: 'border-slate-200 bg-slate-50 text-slate-700' },
   { label: '生產中', filter: 'production', tone: 'border-cyan-100 bg-cyan-50 text-cyan-800' },
-  { label: '暫停排程', filter: 'paused', tone: 'border-orange-100 bg-orange-50 text-orange-800' },
   { label: '已完成', filter: 'completed', tone: 'border-emerald-100 bg-emerald-50 text-emerald-800' },
   { label: '即將到交期', filter: 'due-soon', tone: 'border-rose-100 bg-rose-50 text-rose-800' },
+  { label: '暫停排程', filter: 'paused', tone: 'border-orange-100 bg-orange-50 text-orange-800' },
+  { label: '已取消', filter: 'cancelled', tone: 'border-slate-200 bg-slate-100 text-slate-600' },
 ];
 
 export function DashboardSummary({ orders, selectedFilter, onSelect }: { orders: ProductionOrder[]; selectedFilter: SummaryFilter; onSelect: (filter: SummaryFilter) => void }) {
