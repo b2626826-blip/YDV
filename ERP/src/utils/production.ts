@@ -9,7 +9,10 @@ export const sumDefective = (order: ProductionOrder) => order.deliveryBatches.re
 export const getDefectRate = (order: ProductionOrder) => {
   const defective = sumDefective(order);
   const inspected = sumCompleted(order) + defective;
-  return inspected === 0 ? 0 : Math.round((defective / inspected) * 10000) / 100;
+  if (inspected === 0) return 0;
+  const rate = Math.round((defective / inspected) * 10000) / 100;
+  // Rounding must not claim 100% while some good pairs exist.
+  return rate === 100 && defective < inspected ? 99.99 : rate;
 };
 export const getProgress = (completed: number, total: number) => total === 0 ? 0 : Math.round((completed / total) * 100);
 export const getOrderProgress = (order: ProductionOrder) => getProgress(sumCompleted(order), order.totalQuantity);

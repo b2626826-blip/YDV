@@ -13,6 +13,11 @@ test('calculates defect rate from completed and defective quantities', () => {
   assert.equal(getDefectRate(order(1500, 12)), 0.79);
 });
 
+test('never rounds a partial defect rate up to 100%', () => {
+  assert.equal(getDefectRate(order(1, 99999)), 99.99);
+  assert.equal(getDefectRate(order(0, 50)), 100);
+});
+
 test('returns zero defect rate when nothing has been inspected', () => {
   assert.equal(getDefectRate(order(0, 0)), 0);
 });
