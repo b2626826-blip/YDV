@@ -33,7 +33,7 @@ function SoleModel({ modelUrl }: { modelUrl: string }): ReactNode {
 
 function ModelLoading() {
   const { progress } = useProgress();
-  return <Html center><span className="rounded-md bg-slate-900/90 px-3 py-2 text-xs text-white">載入 3D 模型… {Math.round(progress)}%</span></Html>;
+  return <Html center><span className="whitespace-nowrap rounded-md bg-slate-900/90 px-3 py-2 text-xs text-white">載入 3D 模型… {Math.round(progress)}%</span></Html>;
 }
 
 class ModelErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {

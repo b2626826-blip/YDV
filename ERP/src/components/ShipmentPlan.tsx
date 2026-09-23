@@ -17,6 +17,9 @@ function batchStatus(batch: DeliveryBatch, orderStatus: ProductionStatus) {
   const quantity = getBatchQuantity(batch);
   const completedQuantity = getBatchCompletedQuantity(batch);
   if (completedQuantity === quantity) return { label: '已完成', className: 'text-emerald-700' };
+  if (orderStatus === 'stopped') return { label: '已停止', className: 'text-rose-700' };
+  if (orderStatus === 'cancelled') return { label: '已取消', className: 'text-slate-500' };
+  if (orderStatus === 'paused') return { label: '已暫停', className: 'text-orange-700' };
   if (completedQuantity > 0) return { label: '生產中', className: 'text-cyan-700' };
   if (orderStatus === 'pending') return { label: '待生管排程', className: 'text-slate-600' };
   if (orderStatus === 'purchasing') return { label: '採購中', className: 'text-amber-700' };

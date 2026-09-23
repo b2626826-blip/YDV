@@ -95,11 +95,17 @@ export default function App() {
   };
 
   const handleCancelOrder = (reason: string) => {
-    if (selectedOrder && ['draft', 'purchasing', 'pending'].includes(selectedOrder.status)) updateStatus('cancelled', reason);
+    if (selectedOrder && ['purchasing', 'pending'].includes(selectedOrder.status)) updateStatus('cancelled', reason);
+  };
+
+  const handleDeleteDraft = () => {
+    if (selectedOrder?.status !== 'draft') return;
+    setOrders((current) => current.filter((order) => order.id !== selectedOrder.id));
+    setPage({ kind: 'dashboard' });
   };
 
   if (page.kind === 'create') return <OrderForm products={products} onCancel={() => setPage({ kind: 'dashboard' })} onCreate={handleCreate} />;
   if (page.kind === 'edit' && selectedOrder) return <OrderForm products={products} initialOrder={selectedOrder} onCancel={() => setPage({ kind: 'detail', orderId: selectedOrder.id })} onUpdate={handleUpdate} />;
-  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onEdit={() => setPage({ kind: 'edit', orderId: selectedOrder.id })} onCompletedChange={handleCompletedChange} onDefectiveChange={handleDefectiveChange} onCompleteOrder={handleCompleteOrder} onSubmitToPurchasing={handleSubmitToPurchasing} onHandoffToProduction={handleHandoffToProduction} onScheduleOrder={handleScheduleOrder} onPauseOrder={handlePauseOrder} onResumeOrder={handleResumeOrder} onStopOrder={handleStopOrder} onCancelOrder={handleCancelOrder} />;
+  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onEdit={() => setPage({ kind: 'edit', orderId: selectedOrder.id })} onCompletedChange={handleCompletedChange} onDefectiveChange={handleDefectiveChange} onCompleteOrder={handleCompleteOrder} onSubmitToPurchasing={handleSubmitToPurchasing} onHandoffToProduction={handleHandoffToProduction} onScheduleOrder={handleScheduleOrder} onPauseOrder={handlePauseOrder} onResumeOrder={handleResumeOrder} onStopOrder={handleStopOrder} onCancelOrder={handleCancelOrder} onDeleteDraft={handleDeleteDraft} />;
   return <DashboardPage orders={orders} onOpenOrder={(orderId) => setPage({ kind: 'detail', orderId })} onCreateOrder={() => setPage({ kind: 'create' })} />;
 }
