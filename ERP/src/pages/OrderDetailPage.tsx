@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { ProductMedia } from '../components/ProductMedia';
 import { ProgressBar } from '../components/ProgressBar';
 import { ShipmentPlan } from '../components/ShipmentPlan';
 import { StatusBadge } from '../components/StatusBadge';
 import { WorkflowStepper } from '../components/WorkflowStepper';
 import { formatProductOrderNumber } from '../utils/orderNumbers';
-import { formatQuantity, getOrderProgress, sumCompleted, sumDefective } from '../utils/production';
+import { PRODUCTION_LINES } from '../config/constants';
+import { formatDate, formatQuantity, getBatchQuantity, getOrderProgress, sumCompleted, sumDefective } from '../utils/production';
 import type { ProductionOrder } from '../types/production';
 
 interface OrderDetailPageProps {
@@ -16,7 +18,7 @@ interface OrderDetailPageProps {
   onCompleteOrder: () => void;
   onSubmitToPurchasing: () => void;
   onHandoffToProduction: () => void;
-  onScheduleOrder: () => void;
+  onScheduleOrder: (lines: Record<string, string>) => void;
   onPauseOrder: () => void;
   onResumeOrder: () => void;
   onStopOrder: (reason: string) => void;
@@ -27,12 +29,24 @@ const actionButton = 'rounded-lg px-4 py-2 text-sm font-bold';
 
 function requestReason(action: string, onConfirm: (reason: string) => void) {
   if (!window.confirm(`確定要${action}嗎？`)) return;
-  const reason = window.prompt(`請輸入${action}原因`)?.trim();
-  if (reason) onConfirm(reason);
+  const reason = window.prompt(`請輸入${action}原因`);
+  if (reason === null) return;
+  if (!reason.trim()) {
+    window.alert(`未填寫${action}原因，操作未執行。`);
+    return;
+  }
+  onConfirm(reason.trim());
 }
 
 function OrderActions({ order, completed, onEdit, onCompleteOrder, onSubmitToPurchasing, onHandoffToProduction, onScheduleOrder, onPauseOrder, onResumeOrder, onStopOrder, onCancelOrder }: Omit<OrderDetailPageProps, 'onBack' | 'onCompletedChange' | 'onDefectiveChange'> & { completed: number }) {
+  const [lineDraft, setLineDraft] = useState<Record<string, string> | null>(null);
   const canCompleteOrder = completed === order.totalQuantity;
+  const allLinesAssigned = lineDraft !== null && order.deliveryBatches.every((batch) => lineDraft[batch.id]);
+  const confirmSchedule = () => {
+    if (!lineDraft || !allLinesAssigned) return;
+    onScheduleOrder(lineDraft);
+    setLineDraft(null);
+  };
   const canEditOrder = order.status === 'draft' || order.status === 'purchasing' || order.status === 'pending';
   const canCancelOrder = order.status === 'draft' || order.status === 'purchasing' || order.status === 'pending';
   const message = {
@@ -50,13 +64,13 @@ function OrderActions({ order, completed, onEdit, onCompleteOrder, onSubmitToPur
     {canEditOrder && <button type="button" onClick={onEdit} className={`${actionButton} border border-teal-600 bg-white text-teal-700 hover:bg-teal-50`}>編輯訂單</button>}
     {order.status === 'draft' && <button type="button" onClick={onSubmitToPurchasing} className={`${actionButton} bg-teal-600 text-white hover:bg-teal-700`}>送出採購</button>}
     {order.status === 'purchasing' && <button type="button" onClick={onHandoffToProduction} className={`${actionButton} bg-amber-600 text-white hover:bg-amber-700`}>送出生管</button>}
-    {order.status === 'pending' && <button type="button" onClick={onScheduleOrder} className={`${actionButton} bg-amber-600 text-white hover:bg-amber-700`}>開始排程</button>}
+    {order.status === 'pending' && !lineDraft && <button type="button" onClick={() => setLineDraft(Object.fromEntries(order.deliveryBatches.map((batch) => [batch.id, batch.productionLine])))} className={`${actionButton} bg-amber-600 text-white hover:bg-amber-700`}>開始排程</button>}
     {order.status === 'production' && <button type="button" onClick={onPauseOrder} className={`${actionButton} border border-orange-300 bg-white text-orange-700 hover:bg-orange-50`}>暫停排程</button>}
     {order.status === 'paused' && <button type="button" onClick={onResumeOrder} className={`${actionButton} bg-cyan-600 text-white hover:bg-cyan-700`}>恢復排程</button>}
     {(order.status === 'production' || order.status === 'paused') && <button type="button" onClick={() => requestReason('停止訂單', onStopOrder)} className={`${actionButton} border border-rose-300 bg-white text-rose-700 hover:bg-rose-50`}>停止訂單</button>}
-    {order.status === 'production' && <button type="button" onClick={onCompleteOrder} disabled={!canCompleteOrder} className={`${actionButton} bg-teal-600 text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300`}>完成訂單</button>}
+    {order.status === 'production' && <button type="button" onClick={() => window.confirm('確定要完成訂單嗎？完成後資料將鎖定，無法再修改。') && onCompleteOrder()} disabled={!canCompleteOrder} className={`${actionButton} bg-teal-600 text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300`}>完成訂單</button>}
     {canCancelOrder && <button type="button" onClick={() => requestReason(order.status === 'draft' ? '刪除草稿' : '取消訂單', onCancelOrder)} className={`${actionButton} border border-slate-300 bg-white text-slate-600 hover:bg-slate-100`}>{order.status === 'draft' ? '刪除草稿' : '取消訂單'}</button>}
-  </div></div>{order.status === 'production' && !canCompleteOrder && <p className="mt-2 text-right text-xs text-slate-500">完成數量達到 {formatQuantity(order.totalQuantity)} 雙後才能完成訂單。</p>}</div>;
+  </div></div>{order.status === 'pending' && lineDraft && <div className="mt-4 rounded-lg border border-amber-200 bg-white p-4"><p className="text-sm font-bold text-slate-800">指定各交貨批次的生產線</p><div className="mt-3 grid gap-2">{order.deliveryBatches.map((batch, index) => <label key={batch.id} className="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-700"><span>批次 {String(index + 1).padStart(2, '0')} · {formatQuantity(getBatchQuantity(batch))} 雙 · {batch.destinationCountry} {formatDate(batch.dueDate)}</span><select aria-label={`交貨批次 ${index + 1} 生產線`} value={lineDraft[batch.id] ?? ''} onChange={(event) => setLineDraft({ ...lineDraft, [batch.id]: event.target.value })} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-teal-500"><option value="">請選擇生產線</option>{PRODUCTION_LINES.map((line) => <option key={line} value={line}>{line}</option>)}</select></label>)}</div><div className="mt-4 flex justify-end gap-2"><button type="button" onClick={() => setLineDraft(null)} className={`${actionButton} border border-slate-300 bg-white text-slate-600 hover:bg-slate-100`}>取消</button><button type="button" onClick={confirmSchedule} disabled={!allLinesAssigned} className={`${actionButton} bg-amber-600 text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-slate-300`}>確認排程</button></div></div>}{order.status === 'production' && !canCompleteOrder && <p className="mt-2 text-right text-xs text-slate-500">完成數量達到 {formatQuantity(order.totalQuantity)} 雙後才能完成訂單。</p>}</div>;
 }
 
 export function OrderDetailPage({ order, onBack, onEdit, onCompletedChange, onDefectiveChange, onCompleteOrder, onSubmitToPurchasing, onHandoffToProduction, onScheduleOrder, onPauseOrder, onResumeOrder, onStopOrder, onCancelOrder }: OrderDetailPageProps) {

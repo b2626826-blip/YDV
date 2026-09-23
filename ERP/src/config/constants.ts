@@ -2,6 +2,13 @@ import type { ProductionStatus, WorkflowStep } from '../types/production';
 
 export const DUE_SOON_DAYS = 7;
 
+export const PRODUCTION_LINES = ['生產線 A', '生產線 B', '生產線 C'];
+
+export const COLOR_SWATCHES: Record<string, string> = {
+  Black: '#1f2937', White: '#ffffff', Grey: '#9ca3af', Red: '#dc2626', Olive: '#6b7c3a', Sand: '#d6c29a',
+  'Sky Blue': '#7dd3fc', Navy: '#1e3a8a', Gum: '#b7834a', Lime: '#a3e635', Beige: '#e8dcc4',
+};
+
 export const WORKFLOW_STEPS: WorkflowStep[] = [
   { id: 'draft', label: '草稿' },
   { id: 'purchasing', label: '採購處理' },
@@ -21,8 +28,9 @@ export const STATUS_META: Record<ProductionStatus, { label: string; className: s
   completed: { label: '已完成', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
 };
 
-export const STATUS_FILTERS: Array<{ value: 'all' | ProductionStatus; label: string }> = [
+export const STATUS_FILTERS: Array<{ value: 'all' | 'due-soon' | ProductionStatus; label: string }> = [
   { value: 'all', label: '全部' },
+  { value: 'due-soon', label: '即將到交期' },
   { value: 'draft', label: '待送採購' },
   { value: 'pending', label: '待生管排程' },
   { value: 'purchasing', label: '採購中' },

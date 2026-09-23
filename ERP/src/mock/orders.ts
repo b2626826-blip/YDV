@@ -17,7 +17,7 @@ export const productionOrders: ProductionOrder[] = [
   },
   {
     id: 'order-2026-002', orderNumber: mockOrderNumber(2), product: product('B1042'), items: [{ color: 'Olive', quantity: 1800 }], totalQuantity: 1800,
-    deliveryBatches: [singleColorBatch('batch-002-1', 1, 'Olive', 1800, 0, '2026-09-25', 'Vietnam', '優先出貨')], status: 'purchasing', createdAt: '2026-09-17',
+    deliveryBatches: [{ ...singleColorBatch('batch-002-1', 1, 'Olive', 1800, 0, '2026-09-25', 'Vietnam', '優先出貨'), productionLine: '' }], status: 'purchasing', createdAt: '2026-09-17',
   },
   {
     id: 'order-2026-003', orderNumber: mockOrderNumber(3), product: product('C5510'), items: [{ color: 'White', quantity: 2400 }, { color: 'Sky Blue', quantity: 1600 }], totalQuantity: 4000,
@@ -28,7 +28,7 @@ export const productionOrders: ProductionOrder[] = [
   },
   {
     id: 'order-2026-004', orderNumber: mockOrderNumber(4), product: product('D8831'), items: [{ color: 'Gum', quantity: 1200 }], totalQuantity: 1200,
-    deliveryBatches: [singleColorBatch('batch-004-1', 1, 'Gum', 1200, 0, '2026-10-12', 'Korea')], status: 'pending', createdAt: '2026-09-20',
+    deliveryBatches: [{ ...singleColorBatch('batch-004-1', 1, 'Gum', 1200, 0, '2026-10-12', 'Korea'), productionLine: '' }], status: 'pending', createdAt: '2026-09-20',
   },
   {
     id: 'order-2026-005', orderNumber: mockOrderNumber(5), product: product('E7712'), items: [{ color: 'Red', quantity: 3000 }], totalQuantity: 3000,
@@ -44,7 +44,7 @@ export const productionOrders: ProductionOrder[] = [
   },
   {
     id: 'order-2026-008', orderNumber: mockOrderNumber(8), product: product('B1042'), items: [{ color: 'Black', quantity: 2200 }], totalQuantity: 2200,
-    deliveryBatches: [singleColorBatch('batch-008-1', 1, 'Black', 2200, 0, '2026-10-28', 'Vietnam')], status: 'pending', createdAt: '2026-09-21',
+    deliveryBatches: [{ ...singleColorBatch('batch-008-1', 1, 'Black', 2200, 0, '2026-10-28', 'Vietnam'), productionLine: '' }], status: 'pending', createdAt: '2026-09-21',
   },
   {
     id: 'order-2026-009', orderNumber: mockOrderNumber(9), product: product('D8831'), items: [{ color: 'White', quantity: 3500 }], totalQuantity: 3500,

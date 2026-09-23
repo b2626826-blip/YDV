@@ -32,7 +32,7 @@ export default function App() {
   };
 
   const handleCompletedChange = (batchId: string, color: string, quantity: number) => {
-    if (!selectedOrder || (selectedOrder.status !== 'production' && selectedOrder.status !== 'paused')) return;
+    if (!selectedOrder || selectedOrder.status !== 'production') return;
     setOrders((current) => current.map((order) => {
       if (order.id !== selectedOrder.id) return order;
       const updated = {
@@ -46,7 +46,7 @@ export default function App() {
   };
 
   const handleDefectiveChange = (batchId: string, color: string, quantity: number) => {
-    if (!selectedOrder || (selectedOrder.status !== 'production' && selectedOrder.status !== 'paused')) return;
+    if (!selectedOrder || selectedOrder.status !== 'production') return;
     setOrders((current) => current.map((order) => order.id === selectedOrder.id ? {
       ...order,
       deliveryBatches: order.deliveryBatches.map((batch) => batch.id === batchId
@@ -73,8 +73,13 @@ export default function App() {
     if (selectedOrder?.status === 'purchasing') updateStatus('pending');
   };
 
-  const handleScheduleOrder = () => {
-    if (selectedOrder?.status === 'pending') updateStatus('production');
+  const handleScheduleOrder = (lines: Record<string, string>) => {
+    if (selectedOrder?.status !== 'pending') return;
+    setOrders((current) => current.map((order) => order.id === selectedOrder.id ? {
+      ...order,
+      status: 'production',
+      deliveryBatches: order.deliveryBatches.map((batch) => ({ ...batch, productionLine: lines[batch.id] ?? batch.productionLine })),
+    } : order));
   };
 
   const handlePauseOrder = () => {
