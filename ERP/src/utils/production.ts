@@ -19,6 +19,7 @@ export const formatDate = (date: string) => new Intl.DateTimeFormat('zh-TW', { y
 export const getNextOutstandingBatch = (order: ProductionOrder): DeliveryBatch | undefined => order.deliveryBatches
   .filter((batch) => getBatchCompletedQuantity(batch) < getBatchQuantity(batch))
   .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+export const getDestinationBatch = (order: ProductionOrder): DeliveryBatch | undefined => getNextOutstandingBatch(order) ?? order.deliveryBatches.at(-1);
 
 export const isDueSoon = (batch: DeliveryBatch, now = new Date()) => {
   if (getBatchCompletedQuantity(batch) >= getBatchQuantity(batch)) return false;

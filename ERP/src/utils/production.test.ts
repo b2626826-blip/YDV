@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { deriveStatus, getDefectRate } from './production.ts';
+import { deriveStatus, getDefectRate, getDestinationBatch } from './production.ts';
 import type { ProductionOrder } from '../types/production';
 
 const order = (completedQuantity: number, defectiveQuantity: number) => ({
@@ -15,6 +15,16 @@ test('calculates defect rate from completed and defective quantities', () => {
 
 test('returns zero defect rate when nothing has been inspected', () => {
   assert.equal(getDefectRate(order(0, 0)), 0);
+});
+
+test('uses the last delivered batch as the destination when an order is complete', () => {
+  const completedOrder = {
+    deliveryBatches: [
+      { dueDate: '2026-09-18', destinationCountry: 'Australia', items: [{ quantity: 900, completedQuantity: 900 }] },
+    ],
+  } as ProductionOrder;
+
+  assert.equal(getDestinationBatch(completedOrder)?.destinationCountry, 'Australia');
 });
 
 test('preserves paused, stopped, and cancelled states when progress changes', () => {
