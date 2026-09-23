@@ -19,6 +19,7 @@ export interface ProductionItem {
 
 export interface DeliveryBatchItem extends ProductionItem {
   completedQuantity: number;
+  defectiveQuantity: number;
 }
 
 export interface DeliveryBatch {

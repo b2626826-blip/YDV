@@ -40,12 +40,27 @@ export default function App() {
     }));
   };
 
+  const handleDefectiveChange = (batchId: string, color: string, quantity: number) => {
+    if (!selectedOrder) return;
+    setOrders((current) => current.map((order) => order.id === selectedOrder.id ? {
+      ...order,
+      deliveryBatches: order.deliveryBatches.map((batch) => batch.id === batchId
+        ? { ...batch, items: batch.items.map((item) => item.color === color ? { ...item, defectiveQuantity: quantity } : item) }
+        : batch),
+    } : order));
+  };
+
   const handleCompleteOrder = () => {
     if (!selectedOrder || sumCompleted(selectedOrder) !== selectedOrder.totalQuantity) return;
     setOrders((current) => current.map((order) => order.id === selectedOrder.id ? { ...order, status: 'completed' } : order));
   };
 
+  const handleScheduleOrder = () => {
+    if (!selectedOrder || (selectedOrder.status !== 'purchasing' && selectedOrder.status !== 'pending')) return;
+    setOrders((current) => current.map((order) => order.id === selectedOrder.id ? { ...order, status: 'production' } : order));
+  };
+
   if (page.kind === 'create') return <OrderForm products={products} onCancel={() => setPage({ kind: 'dashboard' })} onCreate={handleCreate} />;
-  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onCompletedChange={handleCompletedChange} onCompleteOrder={handleCompleteOrder} />;
+  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onCompletedChange={handleCompletedChange} onDefectiveChange={handleDefectiveChange} onCompleteOrder={handleCompleteOrder} onScheduleOrder={handleScheduleOrder} />;
   return <DashboardPage orders={orders} onOpenOrder={(orderId) => setPage({ kind: 'detail', orderId })} onCreateOrder={() => setPage({ kind: 'create' })} />;
 }

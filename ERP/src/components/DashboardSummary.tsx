@@ -5,7 +5,7 @@ type SummaryFilter = 'all' | 'due-soon' | ProductionStatus;
 
 const cards: Array<{ label: string; filter: SummaryFilter; tone: string }> = [
   { label: '生產訂單總數', filter: 'all', tone: 'border-slate-200 bg-white text-slate-900' },
-  { label: '待處理', filter: 'pending', tone: 'border-slate-200 bg-slate-50 text-slate-700' },
+  { label: '待生管排程', filter: 'pending', tone: 'border-slate-200 bg-slate-50 text-slate-700' },
   { label: '採購中', filter: 'purchasing', tone: 'border-amber-100 bg-amber-50 text-amber-800' },
   { label: '生產中', filter: 'production', tone: 'border-cyan-100 bg-cyan-50 text-cyan-800' },
   { label: '已完成', filter: 'completed', tone: 'border-emerald-100 bg-emerald-50 text-emerald-800' },

@@ -4,13 +4,13 @@ import type { DeliveryBatch, ProductionOrder } from '../types/production';
 const product = (code: string) => products.find((item) => item.productCode === code)!;
 const mockOrderNumber = (sequence: number) => `PO-2026-${String(9000 + sequence).padStart(5, '0')}`;
 const productionLineFor = (batchNumber: number) => batchNumber % 2 === 0 ? '生產線 B' : '生產線 A';
-const singleColorBatch = (id: string, batchNumber: number, color: string, quantity: number, completedQuantity: number, dueDate: string, destinationCountry: string, note?: string): DeliveryBatch => ({ id, batchNumber, productionLine: productionLineFor(batchNumber), items: [{ color, quantity, completedQuantity }], dueDate, destinationCountry, note });
+const singleColorBatch = (id: string, batchNumber: number, color: string, quantity: number, completedQuantity: number, dueDate: string, destinationCountry: string, note?: string, defectiveQuantity = 0): DeliveryBatch => ({ id, batchNumber, productionLine: productionLineFor(batchNumber), items: [{ color, quantity, completedQuantity, defectiveQuantity }], dueDate, destinationCountry, note });
 
 export const productionOrders: ProductionOrder[] = [
   {
     id: 'order-2026-001', orderNumber: mockOrderNumber(1), product: product('A2387'), items: [{ color: 'Black', quantity: 5000 }], totalQuantity: 5000,
     deliveryBatches: [
-      singleColorBatch('batch-001-1', 1, 'Black', 2000, 1500, '2026-10-10', 'Vietnam'),
+      singleColorBatch('batch-001-1', 1, 'Black', 2000, 1500, '2026-10-10', 'Vietnam', undefined, 12),
       singleColorBatch('batch-001-2', 2, 'Black', 2000, 800, '2026-10-20', 'Japan'),
       singleColorBatch('batch-001-3', 3, 'Black', 1000, 0, '2026-10-30', 'United States'),
     ], status: 'production', createdAt: '2026-09-16',
@@ -22,8 +22,8 @@ export const productionOrders: ProductionOrder[] = [
   {
     id: 'order-2026-003', orderNumber: mockOrderNumber(3), product: product('C5510'), items: [{ color: 'White', quantity: 2400 }, { color: 'Sky Blue', quantity: 1600 }], totalQuantity: 4000,
     deliveryBatches: [
-      { id: 'batch-003-1', batchNumber: 1, productionLine: productionLineFor(1), items: [{ color: 'White', quantity: 2200, completedQuantity: 1200 }], dueDate: '2026-10-04', destinationCountry: 'Japan' },
-      { id: 'batch-003-2', batchNumber: 2, productionLine: productionLineFor(2), items: [{ color: 'White', quantity: 200, completedQuantity: 0 }, { color: 'Sky Blue', quantity: 1600, completedQuantity: 0 }], dueDate: '2026-10-18', destinationCountry: 'Taiwan' },
+      { id: 'batch-003-1', batchNumber: 1, productionLine: productionLineFor(1), items: [{ color: 'White', quantity: 2200, completedQuantity: 1200, defectiveQuantity: 8 }], dueDate: '2026-10-04', destinationCountry: 'Japan' },
+      { id: 'batch-003-2', batchNumber: 2, productionLine: productionLineFor(2), items: [{ color: 'White', quantity: 200, completedQuantity: 0, defectiveQuantity: 0 }, { color: 'Sky Blue', quantity: 1600, completedQuantity: 0, defectiveQuantity: 0 }], dueDate: '2026-10-18', destinationCountry: 'Taiwan' },
     ], status: 'production', createdAt: '2026-09-10',
   },
   {

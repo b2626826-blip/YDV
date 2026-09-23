@@ -8,7 +8,7 @@
     "lint": "tsc -b --pretty false",
     "build": "tsc -b && vite build",
     "check": "tsc -b --pretty false",
-    "test": "node --test src/utils/orderNumbers.test.ts"
+    "test": "node --test src/utils/*.test.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",
