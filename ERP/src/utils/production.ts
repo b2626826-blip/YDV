@@ -31,6 +31,7 @@ export const isDueSoon = (batch: DeliveryBatch, now = new Date()) => {
 export const deriveStatus = (order: ProductionOrder): ProductionStatus => {
   const completed = sumCompleted(order);
   if (order.status === 'completed') return 'completed';
+  if (order.status === 'paused' || order.status === 'stopped' || order.status === 'cancelled') return order.status;
   if (completed > 0) return 'production';
   return order.status;
 };

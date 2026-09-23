@@ -6,16 +6,16 @@ import { DashboardPage } from './pages/DashboardPage';
 import { OrderDetailPage } from './pages/OrderDetailPage';
 import { deriveStatus, sumCompleted } from './utils/production';
 import { assignOrderGroup, formatOrderNumber, getNextOrderSequence } from './utils/orderNumbers';
-import type { ProductionOrder } from './types/production';
+import type { ProductionOrder, ProductionStatus } from './types/production';
 
-type Page = { kind: 'dashboard' } | { kind: 'create' } | { kind: 'detail'; orderId: string };
+type Page = { kind: 'dashboard' } | { kind: 'create' } | { kind: 'edit'; orderId: string } | { kind: 'detail'; orderId: string };
 
 const products = productService.list();
 
 export default function App() {
   const [orders, setOrders] = useState<ProductionOrder[]>(() => productionOrderService.list());
   const [page, setPage] = useState<Page>({ kind: 'dashboard' });
-  const selectedOrder = page.kind === 'detail' ? orders.find((order) => order.id === page.orderId) : undefined;
+  const selectedOrder = page.kind === 'detail' || page.kind === 'edit' ? orders.find((order) => order.id === page.orderId) : undefined;
 
   const handleCreate = (createdOrders: ProductionOrder[]) => {
     const year = new Date().getFullYear();
@@ -26,8 +26,13 @@ export default function App() {
     setPage({ kind: 'detail', orderId: numberedOrders[0]!.id });
   };
 
+  const handleUpdate = (updatedOrder: ProductionOrder) => {
+    setOrders((current) => current.map((order) => order.id === updatedOrder.id ? updatedOrder : order));
+    setPage({ kind: 'detail', orderId: updatedOrder.id });
+  };
+
   const handleCompletedChange = (batchId: string, color: string, quantity: number) => {
-    if (!selectedOrder) return;
+    if (!selectedOrder || (selectedOrder.status !== 'production' && selectedOrder.status !== 'paused')) return;
     setOrders((current) => current.map((order) => {
       if (order.id !== selectedOrder.id) return order;
       const updated = {
@@ -41,7 +46,7 @@ export default function App() {
   };
 
   const handleDefectiveChange = (batchId: string, color: string, quantity: number) => {
-    if (!selectedOrder) return;
+    if (!selectedOrder || (selectedOrder.status !== 'production' && selectedOrder.status !== 'paused')) return;
     setOrders((current) => current.map((order) => order.id === selectedOrder.id ? {
       ...order,
       deliveryBatches: order.deliveryBatches.map((batch) => batch.id === batchId
@@ -51,16 +56,45 @@ export default function App() {
   };
 
   const handleCompleteOrder = () => {
-    if (!selectedOrder || sumCompleted(selectedOrder) !== selectedOrder.totalQuantity) return;
+    if (!selectedOrder || selectedOrder.status !== 'production' || sumCompleted(selectedOrder) !== selectedOrder.totalQuantity) return;
     setOrders((current) => current.map((order) => order.id === selectedOrder.id ? { ...order, status: 'completed' } : order));
   };
 
+  const updateStatus = (status: ProductionStatus, statusReason?: string) => {
+    if (!selectedOrder) return;
+    setOrders((current) => current.map((order) => order.id === selectedOrder.id ? { ...order, status, statusReason } : order));
+  };
+
+  const handleSubmitToPurchasing = () => {
+    if (selectedOrder?.status === 'draft') updateStatus('purchasing');
+  };
+
+  const handleHandoffToProduction = () => {
+    if (selectedOrder?.status === 'purchasing') updateStatus('pending');
+  };
+
   const handleScheduleOrder = () => {
-    if (!selectedOrder || (selectedOrder.status !== 'purchasing' && selectedOrder.status !== 'pending')) return;
-    setOrders((current) => current.map((order) => order.id === selectedOrder.id ? { ...order, status: 'production' } : order));
+    if (selectedOrder?.status === 'pending') updateStatus('production');
+  };
+
+  const handlePauseOrder = () => {
+    if (selectedOrder?.status === 'production') updateStatus('paused');
+  };
+
+  const handleResumeOrder = () => {
+    if (selectedOrder?.status === 'paused') updateStatus('production');
+  };
+
+  const handleStopOrder = (reason: string) => {
+    if (selectedOrder?.status === 'production' || selectedOrder?.status === 'paused') updateStatus('stopped', reason);
+  };
+
+  const handleCancelOrder = (reason: string) => {
+    if (selectedOrder && ['draft', 'purchasing', 'pending'].includes(selectedOrder.status)) updateStatus('cancelled', reason);
   };
 
   if (page.kind === 'create') return <OrderForm products={products} onCancel={() => setPage({ kind: 'dashboard' })} onCreate={handleCreate} />;
-  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onCompletedChange={handleCompletedChange} onDefectiveChange={handleDefectiveChange} onCompleteOrder={handleCompleteOrder} onScheduleOrder={handleScheduleOrder} />;
+  if (page.kind === 'edit' && selectedOrder) return <OrderForm products={products} initialOrder={selectedOrder} onCancel={() => setPage({ kind: 'detail', orderId: selectedOrder.id })} onUpdate={handleUpdate} />;
+  if (selectedOrder) return <OrderDetailPage order={selectedOrder} onBack={() => setPage({ kind: 'dashboard' })} onEdit={() => setPage({ kind: 'edit', orderId: selectedOrder.id })} onCompletedChange={handleCompletedChange} onDefectiveChange={handleDefectiveChange} onCompleteOrder={handleCompleteOrder} onSubmitToPurchasing={handleSubmitToPurchasing} onHandoffToProduction={handleHandoffToProduction} onScheduleOrder={handleScheduleOrder} onPauseOrder={handlePauseOrder} onResumeOrder={handleResumeOrder} onStopOrder={handleStopOrder} onCancelOrder={handleCancelOrder} />;
   return <DashboardPage orders={orders} onOpenOrder={(orderId) => setPage({ kind: 'detail', orderId })} onCreateOrder={() => setPage({ kind: 'create' })} />;
 }

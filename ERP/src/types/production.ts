@@ -1,6 +1,6 @@
 export type MediaType = 'image' | '3d';
 
-export type ProductionStatus = 'pending' | 'purchasing' | 'production' | 'completed';
+export type ProductionStatus = 'draft' | 'pending' | 'purchasing' | 'production' | 'paused' | 'stopped' | 'cancelled' | 'completed';
 
 export interface Product {
   id: string;
@@ -41,6 +41,7 @@ export interface ProductionOrder {
   totalQuantity: number;
   deliveryBatches: DeliveryBatch[];
   status: ProductionStatus;
+  statusReason?: string;
   createdAt: string;
 }
 
