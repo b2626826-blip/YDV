@@ -1,4 +1,4 @@
-import { isDueSoon } from '../utils/production';
+import { hasDueSoonBatch } from '../utils/production';
 import type { ProductionOrder, ProductionStatus } from '../types/production';
 
 type SummaryFilter = 'all' | 'due-soon' | ProductionStatus;
@@ -16,7 +16,7 @@ const cards: Array<{ label: string; filter: SummaryFilter; tone: string }> = [
 ];
 
 export function DashboardSummary({ orders, selectedFilter, onSelect }: { orders: ProductionOrder[]; selectedFilter: SummaryFilter; onSelect: (filter: SummaryFilter) => void }) {
-  const dueSoonOrderIds = new Set(orders.filter((order) => order.deliveryBatches.some((batch) => isDueSoon(batch))).map((order) => order.id));
+  const dueSoonOrderIds = new Set(orders.filter((order) => hasDueSoonBatch(order)).map((order) => order.id));
   return <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-7" aria-label="生產摘要">{cards.map((card) => {
     const value = card.filter === 'due-soon' ? dueSoonOrderIds.size : card.filter === 'all' ? orders.length : orders.filter((order) => order.status === card.filter).length;
     return <button type="button" key={card.label} onClick={() => onSelect(card.filter)} aria-pressed={selectedFilter === card.filter} className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 ${card.tone} ${selectedFilter === card.filter ? 'ring-2 ring-teal-500' : ''}`}><p className="text-xs font-medium">{card.label}</p><p className="mt-2 text-3xl font-bold tracking-tight">{value}</p></button>;

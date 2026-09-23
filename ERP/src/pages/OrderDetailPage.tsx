@@ -63,7 +63,7 @@ export function OrderDetailPage({ order, onBack, onEdit, onCompletedChange, onDe
   const completed = sumCompleted(order);
   const defective = sumDefective(order);
   const progress = getOrderProgress(order);
-  const canEditProduction = order.status === 'production' || order.status === 'paused';
+  const canEditProduction = order.status === 'production';
   const productSequence = order.productSequence ?? 1;
 
   const statusNoteLabel = order.status === 'cancelled' ? '取消原因' : '停止原因';

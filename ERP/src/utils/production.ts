@@ -21,13 +21,19 @@ export const getNextOutstandingBatch = (order: ProductionOrder): DeliveryBatch |
   .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
 export const getDestinationBatch = (order: ProductionOrder): DeliveryBatch | undefined => getNextOutstandingBatch(order) ?? order.deliveryBatches.at(-1);
 
-export const isDueSoon = (batch: DeliveryBatch, now = new Date()) => {
-  if (getBatchCompletedQuantity(batch) >= getBatchQuantity(batch)) return false;
+const CLOSED_STATUSES: ProductionStatus[] = ['completed', 'stopped', 'cancelled'];
+export const isOpenStatus = (status: ProductionStatus) => !CLOSED_STATUSES.includes(status);
+
+const getDaysUntilDue = (batch: DeliveryBatch, now: Date) => {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const due = new Date(`${batch.dueDate}T00:00:00`);
-  const remainingDays = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
-  return remainingDays >= 0 && remainingDays <= DUE_SOON_DAYS;
+  return Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
 };
+const isBatchOutstanding = (batch: DeliveryBatch) => getBatchCompletedQuantity(batch) < getBatchQuantity(batch);
+export const isOverdue = (batch: DeliveryBatch, now = new Date()) => isBatchOutstanding(batch) && getDaysUntilDue(batch, now) < 0;
+// Includes overdue batches: they need attention even more than upcoming ones.
+export const isDueSoon = (batch: DeliveryBatch, now = new Date()) => isBatchOutstanding(batch) && getDaysUntilDue(batch, now) <= DUE_SOON_DAYS;
+export const hasDueSoonBatch = (order: ProductionOrder, now = new Date()) => isOpenStatus(order.status) && order.deliveryBatches.some((batch) => isDueSoon(batch, now));
 
 export const deriveStatus = (order: ProductionOrder): ProductionStatus => {
   const completed = sumCompleted(order);

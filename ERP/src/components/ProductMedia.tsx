@@ -40,7 +40,7 @@ class ModelErrorBoundary extends Component<{ children: ReactNode }, { failed: bo
   public override state = { failed: false };
   public static getDerivedStateFromError() { return { failed: true }; }
   public override render() {
-    if (this.state.failed) return <Html center><span className="rounded-md bg-rose-950/90 px-3 py-2 text-xs text-rose-100">模型無法載入</span></Html>;
+    if (this.state.failed) return <Html center><span className="whitespace-nowrap rounded-md bg-rose-950/90 px-3 py-2 text-xs text-rose-100">模型無法載入</span></Html>;
     return this.props.children;
   }
 }
