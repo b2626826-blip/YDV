@@ -2,6 +2,8 @@ export type MediaType = 'image' | '3d';
 
 export type ProductionStatus = 'draft' | 'pending' | 'purchasing' | 'production' | 'paused' | 'stopped' | 'cancelled' | 'completed';
 
+export const EU_SHOE_SIZES = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45] as const;
+
 export interface Product {
   id: string;
   productCode: string;
@@ -17,9 +19,20 @@ export interface ProductionItem {
   quantity: number;
 }
 
+export interface SizeQuantity {
+  size: typeof EU_SHOE_SIZES[number];
+  quantity: number;
+}
+
+export interface OrderItem extends ProductionItem {
+  sizeQuantities?: SizeQuantity[];
+  sizeQuantitiesSample?: boolean;
+}
+
 export interface DeliveryBatchItem extends ProductionItem {
   completedQuantity: number;
   defectiveQuantity: number;
+  sizeQuantities?: SizeQuantity[];
 }
 
 export interface DeliveryBatch {
@@ -37,7 +50,7 @@ export interface ProductionOrder {
   orderNumber: string;
   productSequence?: number;
   product: Product;
-  items: ProductionItem[];
+  items: OrderItem[];
   totalQuantity: number;
   deliveryBatches: DeliveryBatch[];
   status: ProductionStatus;
